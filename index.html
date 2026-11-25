@@ -611,6 +611,7 @@ video.addEventListener('touchstart', () => { if (video.muted) { video.muted = fa
                         video.play().catch(() => {}); // Видео на экране - играем
                     } else {
                         video.pause(); // Видео ушло с экрана - пауза
+                        video.muted = true; // Принудительно выключаем звук
                     }
                 });
             }, { root: document.getElementById('trap-feed'), threshold: 0.6 });
