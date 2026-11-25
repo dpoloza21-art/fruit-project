@@ -596,10 +596,12 @@
             video.src = videoSrc;
             video.autoplay = true;
             video.loop = true;
-            video.muted = true; // Важно для автовоспроизведения
+            // video.muted = true; // Важно для автовоспроизведения
             video.playsInline = true; // Важно для iPhone
 
             frame.appendChild(video);
+            video.onclick = () => { if (video.muted) { video.muted = false; video.play(); } };
+video.addEventListener('touchstart', () => { if (video.muted) { video.muted = false; video.play(); } }, {passive: true});
             item.appendChild(frame);
 
             return item;
