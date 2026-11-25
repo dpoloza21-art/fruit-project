@@ -584,53 +584,44 @@
            ═══════════════════════════════════════════════ */
         function createReelItem(index) {
             const videoSrc = LOCAL_VIDEOS[index % LOCAL_VIDEOS.length];
-
             const item = document.createElement('div');
             item.className = 'reel-item';
-            item.dataset.index = index;
-
+            
             const frame = document.createElement('div');
             frame.className = 'reel-frame';
-
+            
             const video = document.createElement('video');
             video.src = videoSrc;
             video.autoplay = true;
             video.loop = true;
-            // video.muted = true; // Важно для автовоспроизведения
-            video.playsInline = true; // Важно для iPhone
-
+            // video.muted = true; // Закомментировано, чтобы звук мог включаться
+            video.playsInline = true; 
+            video.preload = "auto";
+            
             frame.appendChild(video);
-            video.onclick = () => { if (video.muted) { video.muted = false; video.play(); } };
-video.addEventListener('touchstart', () => { if (video.muted) { video.muted = false; video.play(); } }, {passive: true});
             item.appendChild(frame);
 
-         // Подключаем "наблюдатель" к каждому новому видео сразу при создании
+            // Включаем звук по клику (требование браузеров)
+            video.onclick = () => { if (video.muted) { video.muted = false; video.play(); } };
+            video.addEventListener('touchstart', () => { if (video.muted) { video.muted = false; video.play(); } }, {passive: true});
+
+            // Наблюдатель за видео
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
-                    const video = entry.target.querySelector('video');
-                    if (!video) return;
-
                     if (entry.isIntersecting) {
-                        // Видео появилось на экране:
-                        // 1. Выключаем звук у всех остальных видео
-                        document.querySelectorAll('#trap-feed video').forEach(v => {
-                            if (v !== video) {
-                                v.pause();
-                                v.muted = true;
-                            }
-                        });
-                        // 2. Включаем звук и воспроизведение для текущего видео
-                        video.muted = false; // Включаем звук
-                        video.play().catch(() => {}); // Воспроизводим
+                        // Если это видео на экране — включаем его
+                        video.play().catch(() => {});
                     } else {
-                        // Видео ушло с экрана:
+                        // Если ушло с экрана — ставим на паузу и ВЫКЛЮЧАЕМ ЗВУК
                         video.pause();
-                        video.muted = true;
+                        video.muted = true; 
                     }
                 });
-            }, { root: document.getElementById('trap-feed'), threshold: 0.6 });
-            }
-            
+            }, { root: document.getElementById('trap-feed'), threshold: 0.5 });
+
+            observer.observe(item);
+            return item;
+        }
         /* ═══════════════════════════════════════════════
            ВОПРОСЫ-СТОП-КАДРЫ
            ═══════════════════════════════════════════════ */
