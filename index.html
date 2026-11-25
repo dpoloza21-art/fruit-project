@@ -1,0 +1,881 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <meta name="theme-color" content="#121212">
+    <title>Ещё один ролик — и спать</title>
+    <style>
+        /* ═══════════════════════════════════════════════
+           БАЗОВЫЕ СБРОСЫ И ПЕРЕМЕННЫЕ
+           ═══════════════════════════════════════════════ */
+        :root {
+            --c-peach: #ffd9c0;
+            --c-mint: #c8e6d0;
+            --c-cream: #fff8ef;
+            --c-rose: #f7c8d8;
+            --c-dark: #121212;
+            --c-dark-2: #1a1a1a;
+            --c-accent: #ff8a65;
+            --c-accent-2: #ff6b4a;
+            --c-text: #f5f5f5;
+            --c-text-dim: rgba(245, 245, 245, 0.7);
+            --c-border: rgba(255, 255, 255, 0.08);
+
+            --radius-sm: 12px;
+            --radius-md: 20px;
+            --radius-lg: 28px;
+            --radius-pill: 999px;
+
+            --safe-top: env(safe-area-inset-top, 0px);
+            --safe-bottom: env(safe-area-inset-bottom, 0px);
+            --safe-left: env(safe-area-inset-left, 0px);
+            --safe-right: env(safe-area-inset-right, 0px);
+
+            --ff: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        html, body { margin: 0; padding: 0; overflow-x: hidden; overscroll-behavior-y: none; }
+
+        body {
+            font-family: var(--ff);
+            background: var(--c-dark);
+            color: var(--c-text);
+            line-height: 1.6;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            padding-top: var(--safe-top);
+            padding-bottom: var(--safe-bottom);
+            padding-left: var(--safe-left);
+            padding-right: var(--safe-right);
+        }
+
+        img, iframe, video { max-width: 100%; display: block; }
+        button { font-family: inherit; border: none; cursor: pointer; background: none; color: inherit; }
+        .hidden { display: none !important; }
+
+        /* ═══════════════════════════════════════════════
+           ОБЩИЕ ЭЛЕМЕНТЫ
+           ═══════════════════════════════════════════════ */
+        .container { width: 100%; max-width: 880px; margin: 0 auto; padding: 0 20px; }
+        .screen { min-height: 100dvh; width: 100%; position: relative; }
+        .section { padding: 80px 0; min-height: auto; }
+        .section-dark { background: var(--c-dark); }
+        .section-final { background: linear-gradient(180deg, var(--c-dark) 0%, #0a0a0a 100%); padding: 100px 0; }
+
+        .btn { display: inline-flex; align-items: center; justify-content: center; min-height: 48px; padding: 14px 28px; font-size: 16px; font-weight: 600; border-radius: var(--radius-pill); transition: transform 0.15s ease, background 0.2s ease, box-shadow 0.2s ease; text-decoration: none; white-space: nowrap; }
+        .btn:active { transform: scale(0.97); }
+        .btn-primary { background: var(--c-accent); color: #fff; box-shadow: 0 8px 24px rgba(255, 138, 101, 0.35); }
+        .btn-primary:hover { background: var(--c-accent-2); }
+        .btn-ghost { background: transparent; color: var(--c-text); border: 1px solid var(--c-border); }
+        .btn-ghost:hover { background: rgba(255, 255, 255, 0.05); }
+        .btn-lg { min-height: 56px; padding: 18px 36px; font-size: 17px; }
+        .btn-sm { min-height: 40px; padding: 10px 20px; font-size: 14px; }
+
+        .block-num { display: inline-block; font-size: 13px; font-weight: 700; letter-spacing: 0.15em; color: var(--c-accent); padding: 6px 14px; border: 1px solid rgba(255, 138, 101, 0.3); border-radius: var(--radius-pill); margin-bottom: 20px; text-transform: uppercase; }
+.section-title { font-size: clamp(28px, 7vw, 48px); font-weight: 800; line-height: 1.1; margin: 0 0 12px; letter-spacing: -0.02em; background: linear-gradient(135deg, var(--c-peach) 0%, var(--c-accent) 50%, var(--c-rose) 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+        .section-sub { font-size: clamp(16px, 3.5vw, 20px); color: var(--c-mint); margin: 0 0 32px; font-weight: 400; }
+        .section-lead { font-size: clamp(16px, 3.8vw, 19px); color: var(--c-text-dim); margin: 0 0 40px; max-width: 640px; line-height: 1.7; }
+
+        .cards-grid { display: grid; gap: 16px; margin-bottom: 32px; }
+        .card { background: linear-gradient(135deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.01)); border: 1px solid var(--c-border); border-radius: var(--radius-md); padding: 24px; transition: transform 0.25s ease, border-color 0.25s ease; }
+        .card:hover { transform: translateY(-2px); border-color: rgba(255, 138, 101, 0.3); }
+        .card-icon { font-size: 32px; margin-bottom: 12px; }
+        .card h3 { font-size: 18px; font-weight: 700; margin: 0 0 10px; color: var(--c-peach); }
+        .card p { margin: 0; color: var(--c-text-dim); font-size: 15px; line-height: 1.65; }
+
+        .blocks-list { display: grid; gap: 14px; margin-bottom: 32px; }
+        .info-block { padding: 22px 24px; background: rgba(255, 255, 255, 0.03); border-left: 3px solid var(--c-accent); border-radius: var(--radius-sm); }
+        .info-block h3 { margin: 0 0 8px; font-size: 17px; font-weight: 700; color: var(--c-peach); }
+        .info-block p { margin: 0; color: var(--c-text-dim); font-size: 15px; line-height: 1.65; }
+
+        .quote { margin: 40px 0 0; padding: 24px 28px; background: linear-gradient(135deg, rgba(200, 230, 208, 0.08), rgba(247, 200, 216, 0.05)); border-radius: var(--radius-md); border-left: 3px solid var(--c-mint); font-style: italic; }
+        .quote p { margin: 0 0 10px; font-size: 16px; color: var(--c-mint); line-height: 1.65; }
+        .quote footer { font-size: 13px; color: var(--c-text-dim); font-style: normal; }
+
+        .loop-chain { display: flex; flex-direction: column; gap: 8px; margin-bottom: 40px; }
+        .loop-step { display: flex; align-items: flex-start; gap: 16px; padding: 20px; background: rgba(255, 255, 255, 0.03); border-radius: var(--radius-md); border: 1px solid var(--c-border); }
+        .loop-num { flex-shrink: 0; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; background: var(--c-accent); color: #fff; font-weight: 700; border-radius: 50%; font-size: 15px; }
+        .loop-step h3 { margin: 0 0 4px; font-size: 16px; font-weight: 700; color: var(--c-peach); }
+        .loop-step p { margin: 0; color: var(--c-text-dim); font-size: 15px; }
+        .loop-arrow { text-align: center; color: var(--c-accent); font-size: 20px; line-height: 1; padding: 2px 0; }
+
+        .poll { background: linear-gradient(135deg, rgba(255, 138, 101, 0.08), rgba(247, 200, 216, 0.05)); border: 1px solid rgba(255, 138, 101, 0.2); border-radius: var(--radius-lg); padding: 28px 24px; margin-bottom: 32px; }
+        .poll h3 { margin: 0 0 20px; font-size: 18px; font-weight: 700; color: var(--c-peach); line-height: 1.4; }
+        .poll-options { display: grid; grid-template-columns: 1fr; gap: 10px; }
+        .poll-option { min-height: 48px; padding: 12px 18px; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--c-border); border-radius: var(--radius-sm); color: var(--c-text); font-size: 15px; font-weight: 500; text-align: left; transition: all 0.2s ease; }
+        .poll-option:active { transform: scale(0.98); }
+        .poll-option.selected { background: var(--c-mint); color: var(--c-dark); border-color: var(--c-mint); font-weight: 600; }
+.poll-result { margin: 20px 0 0; padding: 16px; background: rgba(200, 230, 208, 0.1); border-radius: var(--radius-sm); color: var(--c-mint); font-size: 15px; line-height: 1.6; animation: fadeIn 0.4s ease; }
+
+        .checklist { list-style: none; padding: 0; margin: 0 0 32px; display: grid; gap: 12px; }
+        .check-item { background: rgba(255, 255, 255, 0.03); border: 1px solid var(--c-border); border-radius: var(--radius-md); padding: 16px 20px; transition: background 0.2s ease; }
+        .check-item:has(input:checked) { background: rgba(200, 230, 208, 0.08); border-color: rgba(200, 230, 208, 0.3); }
+        .check-item label { display: flex; align-items: flex-start; gap: 14px; cursor: pointer; min-height: 44px; }
+        .check-item input[type="checkbox"] { flex-shrink: 0; width: 22px; height: 22px; margin-top: 2px; accent-color: var(--c-mint); cursor: pointer; }
+        .check-text { color: var(--c-text-dim); font-size: 15px; line-height: 1.6; }
+        .check-item:has(input:checked) .check-text { color: var(--c-text); }
+
+        .highlight { padding: 24px; background: linear-gradient(135deg, rgba(255, 138, 101, 0.15), rgba(247, 200, 216, 0.08)); border: 1px solid rgba(255, 138, 101, 0.25); border-radius: var(--radius-lg); text-align: center; }
+        .highlight p { margin: 0; font-size: 16px; line-height: 1.65; color: var(--c-text); font-weight: 500; }
+
+        .final-content { text-align: center; max-width: 640px; margin: 0 auto; }
+        .final-lead { font-size: clamp(22px, 5vw, 32px); font-weight: 800; line-height: 1.2; margin: 0 0 24px; background: linear-gradient(135deg, var(--c-peach), var(--c-accent)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+        .final-text { font-size: 17px; color: var(--c-text-dim); line-height: 1.7; margin: 0 0 16px; }
+        .final-buttons { display: flex; flex-direction: column; gap: 12px; margin-top: 40px; }
+
+        /* ═══════════════════════════════════════════════
+           ЭКРАН 0 — ОБЛОЖКА
+           ═══════════════════════════════════════════════ */
+        .screen-cover { display: flex; align-items: center; justify-content: center; padding: 60px 20px; background: radial-gradient(ellipse at top, #2a1810 0%, var(--c-dark) 70%); overflow: hidden; }
+        .cover-bg { position: absolute; inset: 0; overflow: hidden; pointer-events: none; }
+        .blob { position: absolute; border-radius: 50%; filter: blur(80px); opacity: 0.5; animation: blobFloat 14s ease-in-out infinite; }
+        .blob-1 { width: 320px; height: 320px; background: var(--c-peach); top: -80px; left: -80px; }
+        .blob-2 { width: 380px; height: 380px; background: var(--c-rose); bottom: -100px; right: -100px; animation-delay: -4s; }
+        .blob-3 { width: 260px; height: 260px; background: var(--c-mint); top: 40%; right: 10%; animation-delay: -8s; opacity: 0.3; }
+        @keyframes blobFloat { 0%, 100% { transform: translate(0, 0) scale(1); } 50% { transform: translate(30px, -30px) scale(1.1); } }
+        .cover-content { position: relative; z-index: 1; text-align: center; max-width: 600px; animation: fadeUp 0.8s ease; }
+        .eyebrow { display: inline-block; font-size: 12px; font-weight: 600; letter-spacing: 0.2em; text-transform: uppercase; color: var(--c-accent); padding: 6px 14px; border: 1px solid rgba(255, 138, 101, 0.3); border-radius: var(--radius-pill); margin-bottom: 24px; }
+        .cover-title { font-size: clamp(36px, 10vw, 64px); font-weight: 900; line-height: 1; letter-spacing: -0.03em; margin: 0 0 16px; background: linear-gradient(135deg, var(--c-peach) 0%, var(--c-accent) 40%, var(--c-rose) 80%, var(--c-mint) 100%); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; }
+        .cover-subtitle { font-size: clamp(16px, 3.8vw, 20px); color: var(--c-mint); margin: 0 0 28px; font-weight: 400; }
+.cover-lead { font-size: clamp(15px, 3.5vw, 17px); color: var(--c-text-dim); margin: 0 0 36px; line-height: 1.65; }
+        .cover-note { margin-top: 18px; font-size: 13px; color: var(--c-text-dim); font-style: italic; opacity: 0.7; }
+
+        /* ═══════════════════════════════════════════════
+           ЭКРАН 1 — ЛОВУШКА (ВИДЕО)
+           ═══════════════════════════════════════════════ */
+        .screen-trap { position: fixed; inset: 0; z-index: 10; background: #000; min-height: 0; }
+        .trap-feed { width: 100%; height: 100dvh; overflow-y: scroll; scroll-snap-type: y mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: none; }
+        .trap-feed::-webkit-scrollbar { display: none; }
+        .reel-item { width: 100%; height: 100dvh; scroll-snap-align: start; scroll-snap-stop: always; position: relative; display: flex; align-items: center; justify-content: center; background: #000; overflow: hidden; }
+        .reel-frame { position: relative; width: 100%; height: 100%; max-width: calc(100dvh * 9 / 16); margin: 0 auto; background: #000; overflow: hidden; }
+        
+        /* Стили для локального видео */
+        .reel-frame video { 
+            position: absolute; 
+            top: 0; 
+            left: 0; 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+        }
+
+        .trap-overlay { position: absolute; inset: 0; z-index: 20; display: flex; align-items: flex-end; justify-content: center; padding: 20px; padding-bottom: calc(20px + var(--safe-bottom)); background: rgba(0, 0, 0, 0.5); backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); animation: fadeIn 0.3s ease; }
+        .question-card { width: 100%; max-width: 480px; background: var(--c-cream); color: var(--c-dark); border-radius: var(--radius-lg); padding: 28px 24px; animation: slideUp 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.2); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); }
+        .question-text { font-size: 18px; font-weight: 700; line-height: 1.4; margin: 0 0 22px; text-align: center; }
+        .question-buttons { display: flex; flex-direction: column; gap: 10px; }
+        .question-btn { min-height: 48px; padding: 12px 20px; background: var(--c-dark); color: var(--c-cream); border-radius: var(--radius-pill); font-size: 15px; font-weight: 600; transition: transform 0.15s ease, background 0.2s ease; }
+        .question-btn:active { transform: scale(0.97); background: var(--c-accent); }
+
+        /* ═══════════════════════════════════════════════
+           ЭКРАН 2 — РАЗРУШЕНИЕ
+           ═══════════════════════════════════════════════ */
+        .screen-destroy { display: flex; align-items: center; justify-content: center; padding: 60px 20px; background: radial-gradient(ellipse at center, #1a0a10 0%, #000 80%); overflow: hidden; }
+        .destroy-particles { position: absolute; inset: 0; pointer-events: none; }
+        .destroy-particle { position: absolute; width: 8px; height: 8px; border-radius: 2px; animation: particleExplode 1.8s ease-out forwards; }
+        @keyframes particleExplode { 0% { opacity: 1; transform: translate(-50%, -50%) scale(1); } 100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(0.2) rotate(720deg); } }
+        .destroy-content { position: relative; z-index: 1; text-align: center; max-width: 600px; }
+        .destroy-line { margin: 0 0 24px; opacity: 0; animation: fadeUp 0.8s ease forwards; }
+        .line-1 { font-size: clamp(28px, 7vw, 44px); font-weight: 900; line-height: 1.1; background: linear-gradient(135deg, var(--c-peach), var(--c-accent)); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; animation-delay: 0.3s; }
+        .line-2 { font-size: clamp(20px, 5vw, 28px); color: var(--c-mint); font-weight: 600; animation-delay: 1.3s; }
+        .line-3 { font-size: clamp(15px, 3.5vw, 17px); color: var(--c-text-dim); line-height: 1.65; animation-delay: 2.3s; }
+.destroy-content .btn { margin-top: 20px; opacity: 0; animation: fadeUp 0.6s ease 3.2s forwards; }
+
+        /* ═══════════════════════════════════════════════
+           ПЛАШКА ВЫХОДА
+           ═══════════════════════════════════════════════ */
+        .exit-toast { position: fixed; top: calc(20px + var(--safe-top)); left: 50%; transform: translateX(-50%); z-index: 100; width: calc(100% - 32px); max-width: 440px; background: linear-gradient(135deg, var(--c-accent), var(--c-accent-2)); color: #fff; padding: 18px 20px; border-radius: var(--radius-md); box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5); animation: slideDown 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.2); }
+        .exit-toast-text { margin: 0 0 14px; font-size: 14px; font-weight: 600; line-height: 1.5; text-align: center; }
+        .exit-toast-buttons { display: flex; gap: 10px; justify-content: center; }
+        .exit-toast .btn-primary { background: #fff; color: var(--c-accent-2); box-shadow: none; }
+        .exit-toast .btn-ghost { color: #fff; border-color: rgba(255, 255, 255, 0.4); }
+
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideDown { from { opacity: 0; transform: translate(-50%, -30px); } to { opacity: 1; transform: translate(-50%, 0); } }
+
+        @media (min-width: 768px) {
+            .container { padding: 0 32px; }
+            .section { padding: 120px 0; }
+            .cards-grid { grid-template-columns: repeat(2, 1fr); }
+            .cards-grid .card:last-child { grid-column: 1 / -1; max-width: 50%; margin: 0 auto; }
+            .blocks-list { grid-template-columns: repeat(2, 1fr); }
+            .loop-chain { flex-direction: row; flex-wrap: wrap; align-items: stretch; }
+            .loop-step { flex: 1 1 calc(50% - 8px); flex-direction: column; text-align: center; }
+            .loop-arrow { display: none; }
+            .poll-options { grid-template-columns: repeat(2, 1fr); }
+            .final-buttons { flex-direction: row; justify-content: center; flex-wrap: wrap; }
+            .question-buttons { flex-direction: row; }
+            .question-btn { flex: 1; }
+            .exit-toast { width: auto; max-width: 480px; }
+        }
+        @media (min-width: 1024px) {
+            .cards-grid { grid-template-columns: repeat(3, 1fr); }
+            .cards-grid .card:last-child { grid-column: auto; max-width: none; }
+            .loop-step { flex: 1 1 calc(25% - 8px); }
+            .poll-options { grid-template-columns: repeat(4, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ═══════════ ЭКРАН 0 — ОБЛОЖКА ═══════════ -->
+    <section class="screen screen-cover" id="screen-cover">
+        <div class="cover-bg">
+            <span class="blob blob-1"></span>
+            <span class="blob blob-2"></span>
+            <span class="blob blob-3"></span>
+        </div>
+        <div class="cover-content">
+            <span class="eyebrow">Интерактивный лонгрид</span>
+            <h1 class="cover-title">Ещё один ролик — и спать</h1>
+            <p class="cover-subtitle">Мозг на автопилоте: анатомия фруктового видеогипноза</p>
+            <p class="cover-lead">
+                Ты открыл это, чтобы прочитать материал о том, как AI-видео с фруктами крадут наше внимание. Но сначала мы предлагаем тебе… посмотреть AI-видео с фруктами. Не переживай. Мы всё объясним. Потом.
+            </p>
+            <button class="btn btn-primary btn-lg" id="btn-start">Начать скроллить</button>
+            <p class="cover-note">Обещаем: это не займёт больше минуты. Наверное.</p>
+        </div>
+    </section>
+
+    <!-- ═══════════ ЭКРАН 1 — ЛОВУШКА ═══════════ -->
+    <section class="screen screen-trap hidden" id="screen-trap">
+        <div class="trap-feed" id="trap-feed">
+<!-- Сюда JS будет вставлять ваши видео -->
+        </div>
+
+        <!-- Оверлей с вопросами -->
+        <div class="trap-overlay hidden" id="trap-overlay">
+            <div class="question-card" id="question-card">
+                <p class="question-text" id="question-text"></p>
+                <div class="question-buttons" id="question-buttons"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════ ЭКРАН 2 — РАЗРУШЕНИЕ ═══════════ -->
+    <section class="screen screen-destroy hidden" id="screen-destroy">
+        <div class="destroy-particles" id="destroy-particles"></div>
+        <div class="destroy-content">
+            <p class="destroy-line line-1">И что ты только что посмотрел?</p>
+            <p class="destroy-line line-2">Вот и мы о том же.</p>
+            <p class="destroy-line line-3">
+                То, что ты сейчас сделал — 47 секунд скроллинга без цели, — это не твоя слабость. Это работающая механика. Сейчас разберём её по частям.
+            </p>
+            <button class="btn btn-primary" id="btn-to-content">Показать, как это работает</button>
+        </div>
+    </section>
+
+    <!-- ═══════════ БЛОК 1 ═══════════ -->
+    <section class="section section-dark hidden" id="block-1">
+        <div class="container">
+            <span class="block-num">01</span>
+            <h2 class="section-title">Что это было?</h2>
+            <p class="section-sub">Пять ингредиентов видеогипноза</p>
+            <p class="section-lead">
+                AI-видео с фруктами под «Камин» — это не случайный мем. Это формула. Каждый элемент в ней — не декорация, а рычаг, который нажимает на конкретные кнопки в твоей голове. Разберём по ингредиентам.
+            </p>
+
+            <div class="cards-grid">
+                <article class="card">
+                    <div class="card-icon">🎧</div>
+                    <h3>1. ASMR-визуал</h3>
+                    <p>Плавные движения, мягкий свет, «сочные» текстуры — мозг воспринимает это как сенсорную разгрузку. Никакой драмы, никакого конфликта. Мозг расслабляется — и перестаёт сопротивляться.</p>
+                </article>
+                <article class="card">
+                    <div class="card-icon">🎵</div>
+                    <h3>2. Ностальгический саундтрек</h3>
+                    <p>«Камин» — песня, которая уже живёт в твоей памяти. Предсказуемая мелодия снижает когнитивную нагрузку и создаёт ощущение «всё в порядке».</p>
+                </article>
+                <article class="card">
+                    <div class="card-icon">🔁</div>
+                    <h3>3. Идеальный loop</h3>
+                    <p>Ролики длиной 6–8 секунд, которые начинаются и заканчиваются в одной точке. Мозг не фиксирует момент «ролик кончился» — и ты не принимаешь решение «посмотреть ещё». Ты просто продолжаешь.</p>
+                </article>
+                <article class="card">
+                    <div class="card-icon">🌸</div>
+                    <h3>4. Пастельная палитра</h3>
+                    <p>Мягкие, «съедобные» цвета снижают тревогу и ассоциируются с безопасностью. Это визуальный сахар: приятно, легко, без последствий.</p>
+                </article>
+                <article class="card">
+                    <div class="card-icon">💭</div>
+                    <h3>5. Отсутствие смысла</h3>
+                    <p>Парадокс: бессмысленное не раздражает, а успокаивает. Нет сюжета — нет ожиданий. Нет ожиданий — нет разочарования. Мозг получает «пустую калорию» удовольствия без затрат.</p>
+                </article>
+            </div>
+
+            <div class="highlight">
+                <p>Бессмысленность здесь — не баг, а фича. Это контент, который не требует от тебя ничего. Именно поэтому от него так трудно оторваться.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════ БЛОК 2 ═══════════ -->
+    <section class="section section-dark hidden" id="block-2">
+        <div class="container">
+            <span class="block-num">02</span>
+<h2 class="section-title">Мозг не спрашивал</h2>
+            <p class="section-sub">Что происходит в голове за 47 секунд</p>
+            <p class="section-lead">
+                Ты не «слабовольный». Ты — человек с дофаминовой системой, которая эволюционно настроена на новизну. А лента новизны не заканчивается.
+            </p>
+
+            <div class="blocks-list">
+                <div class="info-block">
+                    <h3>Дофаминовая петля</h3>
+                    <p>Каждый новый ролик — маленькая доза «предвкушения». Дофамин выделяется не на удовольствие, а на ожидание следующего. Поэтому «ещё один» ощущается сильнее, чем «этот».</p>
+                </div>
+                <div class="info-block">
+                    <h3>Эффект «ещё одного»</h3>
+                    <p>Мозг плохо считает мелкие повторения. 8-секундный ролик кажется «ничем», а 40 таких роликов — «уже поздно, но ладно». Порог «достаточно» сдвигается с каждым свайпом.</p>
+                </div>
+                <div class="info-block">
+                    <h3>Сенсорная перегрузка vs. разгрузка</h3>
+                    <p>Парадокс: яркий визуал успокаивает, если он простой. Фрукты не конкурируют за внимание смыслом — они дают мозгу «отдохнуть, пока он думает, что развлекается».</p>
+                </div>
+                <div class="info-block">
+                    <h3>Автопилот</h3>
+                    <p>Когда действие повторяется, оно уходит из зоны осознанного контроля в привычку. Скроллинг перестаёт быть решением — он становится фоном. Ты уже не «смотришь», ты «находишься в процессе».</p>
+                </div>
+            </div>
+
+            <blockquote class="quote">
+                <p>«Мы ищем не контент. Мы ищем состояние. И фрукты под "Камин" выдают его быстрее, чем что-либо ещё».</p>
+                <footer>— психолог, исследователь медиа</footer>
+            </blockquote>
+        </div>
+    </section>
+
+    <!-- ═══════════ БЛОК 3 ═══════════ -->
+    <section class="section section-dark hidden" id="block-3">
+        <div class="container">
+            <span class="block-num">03</span>
+            <h2 class="section-title">Скроллинг как эмоциональная зависимость</h2>
+            <p class="section-sub">От скуки к привычке — и обратно</p>
+            <p class="section-lead">
+                Зависимость — громкое слово. Но эмоциональная зависимость от скроллинга — это не про «ломку». Это про то, что ты автоматически тянешься к телефону, когда тебе скучно, тревожно или просто пусто. И фрукты здесь — идеальный «наполнитель».
+            </p>
+
+            <div class="loop-chain">
+                <div class="loop-step">
+                    <span class="loop-num">1</span>
+                    <h3>Триггер</h3>
+                    <p>скука, тревога, усталость, ожидание.</p>
+                </div>
+                <div class="loop-arrow">↓</div>
+                <div class="loop-step">
+                    <span class="loop-num">2</span>
+                    <h3>Действие</h3>
+                    <p>открыть ленту.</p>
+                </div>
+                <div class="loop-arrow">↓</div>
+                <div class="loop-step">
+                    <span class="loop-num">3</span>
+                    <h3>Награда</h3>
+                    <p>быстрый, предсказуемый, безопасный визуальный «сахар».</p>
+                </div>
+                <div class="loop-arrow">↓</div>
+                <div class="loop-step">
+                    <span class="loop-num">4</span>
+                    <h3>Петля</h3>
+                    <p>чем чаще повторяешь, тем короче путь от триггера к действию.</p>
+                </div>
+            </div>
+
+            <div class="poll" id="poll">
+                <h3>А ты? Когда ты чаще всего открываешь ленту?</h3>
+                <div class="poll-options">
+                    <button class="poll-option" data-value="bored">Когда скучно</button>
+                    <button class="poll-option" data-value="anxious">Когда тревожно</button>
+<button class="poll-option" data-value="sleep">Перед сном</button>
+                    <button class="poll-option" data-value="auto">На автомате, не помню</button>
+                </div>
+                <p class="poll-result hidden" id="poll-result">
+                    Если ты выбрал «на автомате» — ты не один. Именно это и есть эмоциональная зависимость в мягкой форме: действие, которое происходит без решения.
+                </p>
+            </div>
+
+            <div class="highlight">
+                <p>Зависимость — это не про силу воли. Это про то, насколько коротким стал путь от «мне некомфортно» до «я уже листаю».</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════ БЛОК 4 ═══════════ -->
+    <section class="section section-dark hidden" id="block-4">
+        <div class="container">
+            <span class="block-num">04</span>
+            <h2 class="section-title">Кто это делает и зачем?</h2>
+            <p class="section-sub">Экономика внимания и фабрика фруктов</p>
+            <p class="section-lead">
+                За каждым милым фруктом стоит не только AI, но и метрика. Удержание внимания — это бизнес. И фрукты в нём — идеальный продукт: дешёвый в производстве, безопасный для рекламы и бесконечно масштабируемый.
+            </p>
+
+            <div class="blocks-list">
+                <div class="info-block">
+                    <h3>AI-генерация</h3>
+                    <p>Снижает стоимость контента почти до нуля: один промпт — сотни роликов.</p>
+                </div>
+                <div class="info-block">
+                    <h3>Алгоритм</h3>
+                    <p>Вознаграждает то, что удерживает: loop-видео идеально подходит под метрики «досмотра» и «повторных просмотров».</p>
+                </div>
+                <div class="info-block">
+                    <h3>Монетизация</h3>
+                    <p>Реклама, охваты, продвижение. Чем дольше ты смотришь, тем дороже твоё внимание.</p>
+                </div>
+                <div class="info-block">
+                    <h3>Парадокс</h3>
+                    <p>Контент, который выглядит как «просто фрукты», — на самом деле оптимизированный продукт под твою дофаминовую систему.</p>
+                </div>
+            </div>
+
+            <div class="highlight">
+                <p>Тебе кажется, что ты выбрал фрукты. На самом деле фрукты выбрали тебя — потому что они лучше всех проходят тест на удержание.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════ БЛОК 5 ═══════════ -->
+    <section class="section section-dark hidden" id="block-5">
+        <div class="container">
+            <span class="block-num">05</span>
+            <h2 class="section-title">Стоп. И что теперь?</h2>
+            <p class="section-sub">Чек-лист осознанного скроллинга (без морализаторства)</p>
+            <p class="section-lead">
+                Мы не будем говорить «удалите приложения». Мы сами их не удалим. Но есть несколько вещей, которые возвращают тебе авторство — без драмы и силы воли.
+            </p>
+
+            <ul class="checklist" id="checklist">
+                <li class="check-item">
+                    <label>
+                        <input type="checkbox">
+                        <span class="check-text">Перед открытием ленты спроси себя: «Я хочу смотреть — или я хочу не чувствовать?»</span>
+                    </label>
+                </li>
+                <li class="check-item">
+                    <label>
+                        <input type="checkbox">
+                        <span class="check-text">Ставь таймер на 5 минут. Не для запрета — для факта.</span>
+                    </label>
+                </li>
+                <li class="check-item">
+                    <label>
+                        <input type="checkbox">
+                        <span class="check-text">Раз в день делай «пустой скролл» осознанным: заметь, что ты листаешь, и реши — продолжить или выйти.</span>
+                    </label>
+</li>
+                <li class="check-item">
+                    <label>
+                        <input type="checkbox">
+                        <span class="check-text">Замени один «фруктовый» перерыв на что-то, что даёт настоящую сенсорную разгрузку: окно, вода, тишина.</span>
+                    </label>
+                </li>
+                <li class="check-item">
+                    <label>
+                        <input type="checkbox">
+                        <span class="check-text">Не ругай себя. Зависимость — это механика, а не характер.</span>
+                    </label>
+                </li>
+            </ul>
+
+            <div class="highlight">
+                <p>Ты не обязан перестать смотреть фрукты. Ты имеешь право знать, зачем ты это делаешь.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════ ФИНАЛ ═══════════ -->
+    <section class="section section-final hidden" id="screen-final">
+        <div class="container">
+            <div class="final-content">
+                <p class="final-lead">В начале мы спросили: «И что ты только что посмотрел?»</p>
+                <p class="final-text">
+                    Теперь у тебя есть ответ. И, надеемся, чуть больше свободы в следующий раз, когда палец сам потянется к экрану.
+                </p>
+                <p class="final-text">А теперь можешь вернуться к фруктам. Мы не обидимся.</p>
+
+                <div class="final-buttons">
+                    <button class="btn btn-primary" id="btn-share-time">Поделиться своим экранным временем</button>
+                    <button class="btn btn-ghost" id="btn-restart">Пройти скроллитест ещё раз</button>
+                    <button class="btn btn-primary" id="btn-share-longread">Поделиться лонгридом</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ═══════════ ПЛАШКА ВЫХОДА ═══════════ -->
+    <div class="exit-toast hidden" id="exit-toast">
+        <p class="exit-toast-text">Уходишь? Понимаем. Но ты уже 30 секунд смотришь фрукты. Может, узнаешь, почему?</p>
+        <div class="exit-toast-buttons">
+            <button class="btn btn-primary btn-sm" id="btn-exit-stay">Остаться</button>
+            <button class="btn btn-ghost btn-sm" id="btn-exit-leave">Всё равно выйти</button>
+        </div>
+    </div>
+
+    <script>
+        /* ═══════════════════════════════════════════════
+           КОНФИГ: ЛОКАЛЬНЫЕ ВИДЕО (6 штук)
+           ═══════════════════════════════════════════════ */
+        const LOCAL_VIDEOS = [
+            'video1.mp4',
+            'video2.mp4',
+            'video3.mp4',
+            'video4.mp4',
+            'video5.mp4',
+            'video6.mp4',
+        ];
+
+        /* Вопросы-стоп-кадры */
+        const QUESTIONS = [
+            {
+                text: 'Ты помнишь, что было 5 роликов назад?',
+                options: [
+                    { label: 'Да', value: 'yes' },
+                    { label: 'Нет', value: 'no' }
+                ]
+            },
+            {
+                text: 'Ты остановился, потому что тебе интересно — или потому что не можешь перестать?',
+                options: [
+                    { label: 'Интересно', value: 'interesting' },
+                    { label: 'Не могу перестать', value: 'cantstop' }
+                ]
+            },
+            {
+                text: 'Сколько минут прошло, как думаешь?',
+                options: [
+                    { label: 'Меньше минуты', value: 'less' },
+                    { label: 'Больше', value: 'more' }
+                ]
+            },
+            {
+                text: 'А теперь честно: ты нажал «Начать скроллить», чтобы прочитать материал — или чтобы просто посмотреть фрукты?',
+                options: [
+                    { label: 'Прочитать материал', value: 'read' },
+                    { label: 'Посмотреть фрукты', value: 'fruits' },
+{ label: 'Не помню', value: 'dontknow' }
+                ]
+            }
+        ];
+
+        /* ═══════════════════════════════════════════════
+           СОСТОЯНИЕ ПРИЛОЖЕНИЯ
+           ═══════════════════════════════════════════════ */
+        const state = {
+            trapStartedAt: 0,
+            trapTimerId: null,
+            questionIndex: 0,
+            answers: {},
+            feedCursor: 0,
+            isLoadingMore: false,
+            exitToastShown: false,
+            visibilityWatchStarted: false
+        };
+
+        function showScreen(id) { document.getElementById(id).classList.remove('hidden'); }
+        function hideScreen(id) { document.getElementById(id).classList.add('hidden'); }
+        function scrollToTop() { window.scrollTo({ top: 0, behavior: 'instant' }); }
+
+        /* ═══════════════════════════════════════════════
+           ЛЕНТА ВИДЕО
+           ═══════════════════════════════════════════════ */
+        function createReelItem(index) {
+            const videoSrc = LOCAL_VIDEOS[index % LOCAL_VIDEOS.length];
+
+            const item = document.createElement('div');
+            item.className = 'reel-item';
+            item.dataset.index = index;
+
+            const frame = document.createElement('div');
+            frame.className = 'reel-frame';
+
+            const video = document.createElement('video');
+            video.src = videoSrc;
+            video.autoplay = true;
+            video.loop = true;
+            video.muted = true; // Важно для автовоспроизведения
+            video.playsInline = true; // Важно для iPhone
+
+            frame.appendChild(video);
+            item.appendChild(frame);
+
+            return item;
+        }
+
+        function appendReels(count = 2) {
+            if (state.isLoadingMore) return;
+            state.isLoadingMore = true;
+
+            const feed = document.getElementById('trap-feed');
+            for (let i = 0; i < count; i++) {
+                feed.appendChild(createReelItem(state.feedCursor));
+                state.feedCursor++;
+            }
+
+            state.isLoadingMore = false;
+        }
+
+        function initFeed() {
+            const feed = document.getElementById('trap-feed');
+            feed.innerHTML = '';
+            state.feedCursor = 0;
+
+            appendReels(4); // Первые 4 ролика
+
+            feed.addEventListener('scroll', () => {
+                const distanceFromBottom = feed.scrollHeight - feed.scrollTop - feed.clientHeight;
+                if (distanceFromBottom < feed.clientHeight * 1.5) {
+                    appendReels(2); // Подгружаем по 2
+                }
+            }, { passive: true });
+        }
+
+        /* ═══════════════════════════════════════════════
+           ВОПРОСЫ-СТОП-КАДРЫ
+           ═══════════════════════════════════════════════ */
+        function showQuestion(index) {
+            if (index >= QUESTIONS.length) {
+                finishTrap();
+                return;
+            }
+
+            state.questionIndex = index;
+            const q = QUESTIONS[index];
+            const overlay = document.getElementById('trap-overlay');
+            const textEl = document.getElementById('question-text');
+            const buttonsEl = document.getElementById('question-buttons');
+
+            textEl.textContent = q.text;
+            buttonsEl.innerHTML = '';
+
+            q.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.className = 'question-btn';
+                btn.textContent = opt.label;
+                btn.addEventListener('click', () => onAnswer(index, opt.value));
+                buttonsEl.appendChild(btn);
+            });
+
+            overlay.classList.remove('hidden');
+            const card = document.getElementById('question-card');
+            card.style.animation = 'none';
+            void card.offsetWidth;
+            card.style.animation = '';
+        }
+
+        function onAnswer(questionIndex, value) {
+state.answers[`q${questionIndex}`] = value;
+            document.getElementById('trap-overlay').classList.add('hidden');
+            setTimeout(() => showQuestion(questionIndex + 1), 250);
+        }
+
+        /* ═══════════════════════════════════════════════
+           ЗАВЕРШЕНИЕ ЛОВУШКИ → РАЗРУШЕНИЕ
+           ═══════════════════════════════════════════════ */
+        function finishTrap() {
+            if (state.trapTimerId) {
+                clearTimeout(state.trapTimerId);
+                state.trapTimerId = null;
+            }
+
+            hideScreen('screen-trap');
+            showScreen('screen-destroy');
+            spawnDestroyParticles();
+            scrollToTop();
+        }
+
+        function spawnDestroyParticles() {
+            const container = document.getElementById('destroy-particles');
+            container.innerHTML = '';
+            const colors = ['#ffd9c0', '#c8e6d0', '#f7c8d8', '#ff8a65', '#fff8ef'];
+
+            for (let i = 0; i < 60; i++) {
+                const p = document.createElement('span');
+                p.className = 'destroy-particle';
+                const color = colors[Math.floor(Math.random() * colors.length)];
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 100 + Math.random() * 300;
+                const tx = Math.cos(angle) * distance;
+                const ty = Math.sin(angle) * distance;
+
+                p.style.background = color;
+                p.style.left = '50%';
+                p.style.top = '50%';
+                p.style.setProperty('--tx', `${tx}px`);
+                p.style.setProperty('--ty', `${ty}px`);
+                p.style.animationDelay = `${Math.random() * 0.3}s`;
+
+                container.appendChild(p);
+            }
+        }
+
+        /* ═══════════════════════════════════════════════
+           ЗАПУСК ЛОВУШКИ
+           ═══════════════════════════════════════════════ */
+        function startTrap() {
+            hideScreen('screen-cover');
+            showScreen('screen-trap');
+            scrollToTop();
+
+            initFeed();
+
+            state.trapStartedAt = Date.now();
+            state.questionIndex = 0;
+            state.answers = {};
+
+            // Таймер до вопросов (15 секунд для теста)
+            state.trapTimerId = setTimeout(() => {
+                showQuestion(0);
+            }, 15000);
+
+            startVisibilityWatch();
+        }
+
+        /* ═══════════════════════════════════════════════
+           ПЛАШКА «УХОДИШЬ?»
+           ═══════════════════════════════════════════════ */
+        function startVisibilityWatch() {
+            if (state.visibilityWatchStarted) return;
+            state.visibilityWatchStarted = true;
+            document.addEventListener('visibilitychange', onVisibilityChange);
+        }
+
+        function onVisibilityChange() {
+            if (state.exitToastShown) return;
+            if (!document.getElementById('screen-trap') || document.getElementById('screen-trap').classList.contains('hidden')) {
+                return;
+            }
+
+            if (document.hidden) {
+                const elapsed = Date.now() - state.trapStartedAt;
+                if (elapsed >= 15000) {
+                    showExitToast();
+                }
+            }
+        }
+
+        function showExitToast() {
+            if (state.exitToastShown) return;
+            state.exitToastShown = true;
+            showScreen('exit-toast');
+        }
+
+        function hideExitToast() {
+            hideScreen('exit-toast');
+        }
+
+        /* ═══════════════════════════════════════════════
+           ПЕРЕХОД К АНАЛИТИКЕ
+           ═══════════════════════════════════════════════ */
+        function showContent() {
+            hideScreen('screen-destroy');
+            ['block-1', 'block-2', 'block-3', 'block-4', 'block-5', 'screen-final'].forEach(showScreen);
+            scrollToTop();
+        }
+
+        /* ═══════════════════════════════════════════════
+           МИНИ-ОПРОС (блок 3)
+═══════════════════════════════════════════════ */
+        function initPoll() {
+            const poll = document.getElementById('poll');
+            if (!poll) return;
+            const options = poll.querySelectorAll('.poll-option');
+            const result = document.getElementById('poll-result');
+
+            options.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    options.forEach(o => o.classList.remove('selected'));
+                    btn.classList.add('selected');
+                    result.classList.remove('hidden');
+                });
+            });
+        }
+
+        /* ═══════════════════════════════════════════════
+           КНОПКИ ФИНАЛА
+           ═══════════════════════════════════════════════ */
+        async function shareTime() {
+            const elapsed = state.trapStartedAt ? Math.round((Date.now() - state.trapStartedAt) / 1000) : 0;
+            const text = `Я залип на AI-фрукты на ${elapsed} сек. А ты? Пройди скроллитест:`;
+            await shareGeneric('Моё экранное время', text);
+        }
+
+        async function shareLongread() {
+            await shareGeneric('Ещё один ролик — и спать', 'Интерактивный лонгрид о том, как AI-фрукты крадут наше внимание.', window.location.href);
+        }
+
+        async function shareGeneric(title, text, url = window.location.href) {
+            const data = { title, text, url };
+            if (navigator.share) {
+                try {
+                    await navigator.share(data);
+                    return;
+                } catch (e) {
+                    if (e.name === 'AbortError') return;
+                }
+            }
+            try {
+                await navigator.clipboard.writeText(`${text}\n${url}`);
+                alert('Ссылка скопирована в буфер обмена ✨');
+            } catch (e) {
+                prompt('Скопируй ссылку вручную:', url);
+            }
+        }
+
+        function restart() {
+            if (state.trapTimerId) {
+                clearTimeout(state.trapTimerId);
+                state.trapTimerId = null;
+            }
+
+            state.trapStartedAt = 0;
+            state.questionIndex = 0;
+            state.answers = {};
+            state.feedCursor = 0;
+            state.exitToastShown = false;
+            state.visibilityWatchStarted = false;
+
+            document.removeEventListener('visibilitychange', onVisibilityChange);
+
+            const feed = document.getElementById('trap-feed');
+            if (feed) feed.innerHTML = '';
+
+            document.getElementById('trap-overlay').classList.add('hidden');
+            hideExitToast();
+
+            ['screen-trap', 'screen-destroy', 'block-1', 'block-2', 'block-3', 'block-4', 'block-5', 'screen-final'].forEach(hideScreen);
+
+            document.querySelectorAll('.poll-option.selected').forEach(el => el.classList.remove('selected'));
+            const pollResult = document.getElementById('poll-result');
+            if (pollResult) pollResult.classList.add('hidden');
+            document.querySelectorAll('#checklist input[type="checkbox"]').forEach(cb => cb.checked = false);
+
+            showScreen('screen-cover');
+            scrollToTop();
+        }
+
+        /* ═══════════════════════════════════════════════
+           ИНИЦИАЛИЗАЦИЯ
+           ═══════════════════════════════════════════════ */
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('btn-start').addEventListener('click', startTrap);
+            document.getElementById('btn-to-content').addEventListener('click', showContent);
+
+            document.getElementById('btn-exit-stay').addEventListener('click', hideExitToast);
+            document.getElementById('btn-exit-leave').addEventListener('click', () => {
+                hideExitToast();
+                finishTrap();
+            });
+
+            document.getElementById('btn-share-time').addEventListener('click', shareTime);
+document.getElementById('btn-share-longread').addEventListener('click', shareLongread);
+            document.getElementById('btn-restart').addEventListener('click', restart);
+
+            initPoll();
+        });
+    </script>
+</body>
+</html>
