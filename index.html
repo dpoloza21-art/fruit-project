@@ -607,46 +607,28 @@ video.addEventListener('touchstart', () => { if (video.muted) { video.muted = fa
          // Подключаем "наблюдатель" к каждому новому видео сразу при создании
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
+                    const video = entry.target.querySelector('video');
+                    if (!video) return;
+
                     if (entry.isIntersecting) {
-                        video.play().catch(() => {}); // Видео на экране - играем
+                        // Видео появилось на экране:
+                        // 1. Выключаем звук у всех остальных видео
+                        document.querySelectorAll('#trap-feed video').forEach(v => {
+                            if (v !== video) {
+                                v.pause();
+                                v.muted = true;
+                            }
+                        });
+                        // 2. Включаем звук и воспроизведение для текущего видео
+                        video.muted = false; // Включаем звук
+                        video.play().catch(() => {}); // Воспроизводим
                     } else {
-                        video.pause(); // Видео ушло с экрана - пауза
-                        video.muted = true; // Принудительно выключаем звук
+                        // Видео ушло с экрана:
+                        video.pause();
+                        video.muted = true;
                     }
                 });
             }, { root: document.getElementById('trap-feed'), threshold: 0.6 });
-
-            observer.observe(item);
-            return item;
-        }
-
-        function appendReels(count = 2) {
-            if (state.isLoadingMore) return;
-            state.isLoadingMore = true;
-
-            const feed = document.getElementById('trap-feed');
-            for (let i = 0; i < count; i++) {
-                feed.appendChild(createReelItem(state.feedCursor));
-                state.feedCursor++;
-            }
-
-            state.isLoadingMore = false;
-        }
-
-        function initFeed() {
-            const feed = document.getElementById('trap-feed');
-            feed.innerHTML = '';
-            state.feedCursor = 0;
-
-            appendReels(4); // Первые 4 ролика
-
-            feed.addEventListener('scroll', () => {
-                const distanceFromBottom = feed.scrollHeight - feed.scrollTop - feed.clientHeight;
-                if (distanceFromBottom < feed.clientHeight * 1.5) {
-                    appendReels(2); // Подгружаем по 2
-                }
-            }, { passive: true });
-        }
 
         /* ═══════════════════════════════════════════════
            ВОПРОСЫ-СТОП-КАДРЫ
