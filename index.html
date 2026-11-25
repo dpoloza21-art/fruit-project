@@ -729,7 +729,7 @@ state.answers[`q${questionIndex}`] = value;
             // Таймер до вопросов (15 секунд для теста)
             state.trapTimerId = setTimeout(() => {
                 showQuestion(0);
-            }, 15000);
+            }, 50000);
 
             startVisibilityWatch();
         }
