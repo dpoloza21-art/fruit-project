@@ -704,6 +704,16 @@ state.answers[`q${questionIndex}`] = value;
         /* ═══════════════════════════════════════════════
            ЗАПУСК ЛОВУШКИ
            ═══════════════════════════════════════════════ */
+        function initFeed() {
+            const feed = document.getElementById('trap-feed');
+            feed.innerHTML = '';
+            state.feedCursor = 0;
+            appendReels(4);
+            feed.addEventListener('scroll', () => {
+                const d = feed.scrollHeight - feed.scrollTop - feed.clientHeight;
+                if (d < feed.clientHeight * 1.5) appendReels(2);
+            }, { passive: true });
+        }
         function startTrap() {
             hideScreen('screen-cover');
             showScreen('screen-trap');
