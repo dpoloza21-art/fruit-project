@@ -604,6 +604,18 @@
 video.addEventListener('touchstart', () => { if (video.muted) { video.muted = false; video.play(); } }, {passive: true});
             item.appendChild(frame);
 
+         // Подключаем "наблюдатель" к каждому новому видео сразу при создании
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        video.play().catch(() => {}); // Видео на экране - играем
+                    } else {
+                        video.pause(); // Видео ушло с экрана - пауза
+                    }
+                });
+            }, { root: document.getElementById('trap-feed'), threshold: 0.6 });
+
+            observer.observe(item);
             return item;
         }
 
@@ -633,39 +645,6 @@ video.addEventListener('touchstart', () => { if (video.muted) { video.muted = fa
                     appendReels(2); // Подгружаем по 2
                 }
             }, { passive: true });
-
-            // НОВЫЙ КОД: Следим за тем, какое видео на экране
-            const observerOptions = {
-                root: feed, // Следим внутри ленты
-                threshold: 0.6 // Видео должно быть видно хотя бы на 60%, чтобы считаться "активным"
-            };
-
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    const video = entry.target.querySelector('video');
-                    if (!video) return;
-
-                    if (entry.isIntersecting) {
-                        // Видео появилось на экране — включаем его
-                        video.play().catch(() => {}); 
-                    } else {
-                        // Видео ушло с экрана — ставим на паузу
-                        video.pause();
-                    }
-                });
-            }, observerOptions);
-
-            // Наблюдаем за всеми новыми видео, которые добавляются в ленту
-            const originalAppendReels = appendReels;
-            appendReels = function(count) {
-                const startCount = feed.children.length;
-                originalAppendReels(count);
-                const endCount = feed.children.length;
-                // Подключаем observer к каждому новому элементу
-                for (let i = startCount; i < endCount; i++) {
-                    observer.observe(feed.children[i]);
-                }
-            };
         }
 
         /* ═══════════════════════════════════════════════
