@@ -704,6 +704,16 @@ state.answers[`q${questionIndex}`] = value;
         /* ═══════════════════════════════════════════════
            ЗАПУСК ЛОВУШКИ
            ═══════════════════════════════════════════════ */
+        function appendReels(count) {
+            if (state.isLoadingMore) return;
+            state.isLoadingMore = true;
+            const feed = document.getElementById('trap-feed');
+            for (let i = 0; i < count; i++) {
+                feed.appendChild(createReelItem(state.feedCursor));
+                state.feedCursor++;
+            }
+            state.isLoadingMore = false;
+        }
         function initFeed() {
             const feed = document.getElementById('trap-feed');
             feed.innerHTML = '';
