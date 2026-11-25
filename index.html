@@ -262,7 +262,7 @@
             <p class="destroy-line line-1">И что ты только что посмотрел?</p>
             <p class="destroy-line line-2">Вот и мы о том же.</p>
             <p class="destroy-line line-3">
-                То, что ты сейчас сделал — 47 секунд скроллинга без цели, — это не твоя слабость. Это работающая механика. Сейчас разберём её по частям.
+                То, что ты сейчас сделал — несколько минут скроллинга без цели, — это не твоя слабость. Это работающая механика. Сейчас разберём её по частям.
             </p>
             <button class="btn btn-primary" id="btn-to-content">Показать, как это работает</button>
         </div>
@@ -531,7 +531,7 @@
         /* Вопросы-стоп-кадры */
         const QUESTIONS = [
             {
-                text: 'Ты помнишь, что было 5 роликов назад?',
+                text: 'Ты помнишь, что было пару роликов назад?',
                 options: [
                     { label: 'Да', value: 'yes' },
                     { label: 'Нет', value: 'no' }
@@ -728,10 +728,10 @@ state.answers[`q${questionIndex}`] = value;
             state.questionIndex = 0;
             state.answers = {};
 
-            // Таймер до вопросов (15 секунд для теста)
+            // Таймер до вопросов (90 секунд для теста)
             state.trapTimerId = setTimeout(() => {
                 showQuestion(0);
-            }, 50000);
+            }, 90000);
 
             startVisibilityWatch();
         }
